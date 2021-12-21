@@ -1,32 +1,50 @@
-import pygame, sys, os
-
+import pandas as pd
+import random
+from comp.Airport import Airport
+from comp.Route import Route
 
 class SimulationManager:
-    pass
+    def __init__(self) -> None:
+        self.df = self.readDataset()
+        self.airports = self.AddRandomAirport(5)
+        self.routes = self.AddRandomRoute(5)
+
+    def run(self):
+        pass
+
+    def readDataset(self):
+        df = pd.read_csv(r"C:\Users\alex2\Desktop\AirTrafficManager\data\airports.csv",
+                         usecols=['type',
+                                  'name',
+                                  'latitude_deg',
+                                  'longitude_deg',
+                                  'elevation_ft',
+                                  'iso_country',
+                                  'municipality',
+                                  'gps_code'])
+        df = df.loc[df['type'].isin(['medium_airport', 'large_airport'])]
+        df = df.dropna()
+        return df
+
+    def AddRandomAirport(self, n):
+        df = self.df.sample(n, random_state=0, replace=False)
+        ap = []
+        for __, row in df.iterrows():
+            ap.append(Airport(ICAO = row[7], city = row[6], country=row[5], lat = row[2], lon=row[3]))
+        return ap
+
+    def AddRandomRoute(self, n):
+        rt = []
+        for i in range(5):
+            ap1, ap2 = random.sample(self.airports, 2)
+            rt.append(Route(ap1.ICAO, ap2.ICAO))
+        return rt
+
 
 if __name__ == '__main__':
-    pygame.init()
-    size = width, height = 320, 240
-    speed = [1, 1]
-    black = 0, 0, 0
+    sm = SimulationManager()
+    for i in sm.airports:
+        print(i)
 
-    screen = pygame.display.set_mode(size)
-
-    ball = pygame.image.load(r"C:\Users\alex2\Desktop\AirTrafficManager\intro_ball.gif")
-    ballrect = ball.get_rect()
-
-    while 1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: sys.exit()
-
-        ballrect = ballrect.move(speed)
-        if ballrect.left < 0 or ballrect.right > width:
-            speed[0] = -speed[0]
-        if ballrect.top < 0 or ballrect.bottom > height:
-            speed[1] = -speed[1]
-
-        screen.fill(black)
-        screen.blit(ball, ballrect)
-        pygame.display.flip()
-
-        pygame.time.delay(10)
+    for i in sm.routes:
+        print(i)

@@ -1,11 +1,11 @@
 
 class Airport:
-	def __init__(self) -> None:
-		self.ICAO = ''
-		self.city = ''
-		self.country = ''
-		self.latitude = ''
-		self.longitude = ''
+	def __init__(self, ICAO, city, country, lat, lon) -> None:
+		self.ICAO = ICAO
+		self.city = city
+		self.country = country
+		self.latitude = lat
+		self.longitude = lon
 
 		self.terminals = []
 		self.runways = []
@@ -16,7 +16,7 @@ class Airport:
 		pass
 
 	def __repr__(self) -> str:
-		pass
+		return self.ICAO + ': ' + self.city + ', ' + self.country
 
 	def update(self) -> None:
 		pass
